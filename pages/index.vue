@@ -4,10 +4,10 @@
       TODO LIST
     </h1>  
     <div class="list" id="todolist">
-        <ul>
+        <ul v-for="(user,userIdx) in users" :key="user.userId">
           <li class="list-item">
             <div class="item-wrapper">
-              <button class="add-button" v-on:click="clickAddItem">
+              <button class="add-button" v-on:click="clickAddItem(userIdx)">
               +
               </button>
               <div class="todo">
@@ -15,13 +15,13 @@
               </div>
             </div>
           </li>
-          <li class="list-item" v-for="(item, index) in list" :key="item.data">
+          <li class="list-item" v-for="(data,dataIdx) in user.tododata" :key="data.data">
             <div class="item-wrapper">
-              <input class="check" type="checkbox">
+              <input class="check" type="checkbox" v-model=data.check>
               <div class="todo">
-                {{ item.data }}
+                {{ data.data }}
               </div>
-              <button class="delete-button" v-on:click="clickDeleteItem(index)"> 
+              <button class="delete-button" v-on:click="clickDeleteItem(dataIdx)"> 
               −
               </button>
             </div>
@@ -32,9 +32,18 @@
 </template>
 
 <script>
+import { db } from '~/plugins/firebase.js'
+import { mapGetters } from 'vuex'
+
 export default
 {
-  data: () =>({   
+  created: function () {
+    this.$store.dispatch('setUsersRef', db.collection('users'))
+  },
+  computed: {
+    ...mapGetters({ users: 'getUsers' })
+  },
+  data: () =>({ 
     index:0,
     text: '',
     list:[
@@ -45,10 +54,12 @@ export default
   }),
 
   methods: {
-    clickAddItem: function() {
+    clickAddItem: function(index) {
       if( 0 < this.text.length )
       {
-        this.list.push({data:this.text});
+        this.users[index].tododata.push({data:this.text,check:false});
+        console.log(this.users[index].id);
+        this.$store.dispatch('updateUsers',this.users[index])
       }
     },
     clickDeleteItem: function(index) {
