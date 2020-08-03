@@ -21,7 +21,7 @@
               <div class="todo">
                 {{ data.data }}
               </div>
-              <button class="delete-button" v-on:click="clickDeleteItem(dataIdx)"> 
+              <button class="delete-button" v-on:click="clickDeleteItem(userIdx,dataIdx)"> 
               −
               </button>
             </div>
@@ -45,26 +45,20 @@ export default
   },
   data: () =>({ 
     index:0,
-    text: '',
-    list:[
-      { data:'やることその1' },
-      { data:'やることその2' },
-      { data:'やることその3' }
-      ]
+    text: ''
   }),
 
   methods: {
-    clickAddItem: function(index) {
+    clickAddItem: function(usrIndex) {
       if( 0 < this.text.length )
       {
-        this.users[index].tododata.push({data:this.text,check:false});
-        console.log(this.users[index].id);
-        this.$store.dispatch('updateUsers',this.users[index])
+        this.users[usrIndex].tododata.push({data:this.text,check:false});
+        this.$store.dispatch('updateUsers',this.users[usrIndex])
       }
     },
-    clickDeleteItem: function(index) {
-      console.log(index);
-      this.list.splice(index,1);
+    clickDeleteItem: function(usrIndex,index) {
+      this.users[usrIndex].tododata.splice(index,1);
+      this.$store.dispatch('updateUsers',this.users[usrIndex])
     }
   }
 }
