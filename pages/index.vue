@@ -17,7 +17,7 @@
           </li>
           <li class="list-item" v-for="(data,dataIdx) in user.tododata" :key="data.data">
             <div class="item-wrapper">
-              <input class="check" type="checkbox" v-model=data.check>
+              <input class="check" type="checkbox" v-model=data.check @input="clickCheck(userIdx,dataIdx)">
               <div class="todo">
                 {{ data.data }}
               </div>
@@ -58,6 +58,10 @@ export default
     },
     clickDeleteItem: function(usrIndex,index) {
       this.users[usrIndex].tododata.splice(index,1);
+      this.$store.dispatch('updateUsers',this.users[usrIndex])
+    },
+    clickCheck: function(usrIndex,index){
+      this.users[usrIndex].tododata[index].check = !(this.users[usrIndex].tododata[index].check);
       this.$store.dispatch('updateUsers',this.users[usrIndex])
     }
   }
